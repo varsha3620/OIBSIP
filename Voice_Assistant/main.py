@@ -2,58 +2,191 @@ import speech_recognition as sr
 import pyttsx3
 from datetime import datetime
 import webbrowser
+from urllib.parse import quote
+
+
+# -----------------------------
+# Speech Recognition
+# -----------------------------
 
 recognizer = sr.Recognizer()
-engine = pyttsx3.init()
 
-def speak(text):
-    engine.say(text)
+
+# -----------------------------
+# Text-to-Speech
+# -----------------------------
+
+def speak(message):
+    print("Assistant:", message)
+
+    engine = pyttsx3.init()
+    engine.say(message)
     engine.runAndWait()
+    engine.stop()
 
-def tell_time():
-    current_time = datetime.now().strftime("%I:%M %p")
-    speak(f"The current time is {current_time}")
 
-def tell_date():
-    current_date = datetime.now().strftime("%d %B %Y")
-    speak(f"Today's date is {current_date}")
+# -----------------------------
+# Listen to User
+# -----------------------------
 
-def search_web(text):
-    search_query = text.replace("search", "").strip()
+def listen(source):
 
-    if search_query:
-        speak(f"Searching for {search_query}")
-        webbrowser.open(
-            f"https://www.google.com/search?q={search_query}"
+    print("\nListening... Speak now!")
+
+    try:
+        audio = recognizer.listen(
+            source,
+            timeout=5,
+            phrase_time_limit=5
         )
-    else:
-        speak("Please tell me what you want to search for.")
 
-with sr.Microphone() as source:
-    print("Adjusting for background noise...")
-    recognizer.adjust_for_ambient_noise(source, duration=1)
+    except sr.WaitTimeoutError:
+        # User did not speak.
+        # Don't say anything; simply listen again.
+        return ""
 
-    print("Listening... Speak now!")
-    audio = recognizer.listen(source)
+    try:
+        text = recognizer.recognize_google(audio)
 
-try:
-    text = recognizer.recognize_google(audio)
-    print("You said:", text)
+        print("You said:", text)
 
-    if "hello" in text.lower():
+        return text.lower()
+
+    except sr.UnknownValueError:
+        speak("Sorry, I could not understand you. Please repeat.")
+        return ""
+
+    except sr.RequestError:
+        speak("Sorry, the speech recognition service is unavailable.")
+        return ""
+
+
+# -----------------------------
+# Process Commands
+# -----------------------------
+
+def process_command(command):
+
+    # Hello
+    if "hello" in command:
         speak("Hello! How can I help you?")
 
-    elif "time" in text.lower():
-        tell_time()
 
-    elif "date" in text.lower():
-        tell_date()
-        
-    elif "search" in text.lower():
-        search_web(text)
-except sr.UnknownValueError:
-    print("Sorry, I could not understand you.")
+    # Time
+    elif "time" in command:
 
-except sr.RequestError as e:
-    print("Speech recognition service is unavailable.")
-    print(e)
+        current_time = datetime.now().strftime("%I:%M %p")
+
+        speak(
+            "The current time is "
+            + current_time
+        )
+
+
+    # Date
+    elif "date" in command:
+
+        current_date = datetime.now().strftime("%d %B %Y")
+
+        speak(
+            "Today's date is "
+            + current_date
+        )
+
+
+    # Web Search
+    elif "search" in command:
+
+        search_text = command.replace(
+            "search",
+            "",
+            1
+        ).strip()
+
+        if search_text:
+
+            speak(
+                "Searching for "
+                + search_text
+            )
+
+            search_url = (
+                "https://www.google.com/search?q="
+                + quote(search_text)
+            )
+
+            webbrowser.open(search_url)
+
+        else:
+
+            speak(
+                "Please tell me what you want to search for."
+            )
+
+
+    # Good bye
+    elif "good bye" in command:
+
+        speak(
+            "Thank you! I'm glad I could help."
+        )
+
+
+    # Exit
+    elif "exit" in command or "quit" in command or "goodbye" in command:
+
+        speak("Goodbye!")
+
+        return False
+
+
+    # Unknown command
+    else:
+
+        speak(
+            "Sorry, I don't understand that command yet."
+        )
+
+
+    return True
+
+
+# -----------------------------
+# Start Voice Assistant
+# -----------------------------
+
+
+
+
+# -----------------------------
+# Microphone
+# -----------------------------
+
+with sr.Microphone(device_index=1) as source:
+
+    print("Adjusting for background noise...")
+
+    recognizer.adjust_for_ambient_noise(
+        source,
+        duration=1
+    )
+
+    print("Voice assistant is ready!")
+
+
+    # -----------------------------
+    # Continuous Listening
+    # -----------------------------
+
+    while True:
+
+        command = listen(source)
+
+        if command:
+
+            continue_running = process_command(
+                command
+            )
+
+            if not continue_running:
+                break
