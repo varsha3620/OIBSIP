@@ -3,14 +3,18 @@ import pyttsx3
 from datetime import datetime
 import webbrowser
 from urllib.parse import quote
-
-
+from nlp import predict_intent
+from weather import get_weather
+from reminder import set_reminder
+from email_sender import send_email
+from knowledge import answer_question
+from custom_commands import execute_custom_command
 # -----------------------------
 # Speech Recognition
 # -----------------------------
 
 recognizer = sr.Recognizer()
-
+reminder_speaking = False
 
 # -----------------------------
 # Text-to-Speech
@@ -37,12 +41,12 @@ def listen(source):
         audio = recognizer.listen(
             source,
             timeout=5,
-            phrase_time_limit=5
+            phrase_time_limit=8
         )
 
     except sr.WaitTimeoutError:
         # User did not speak.
-        # Don't say anything; simply listen again.
+        # Stay silent and listen again.
         return ""
 
     try:
@@ -53,7 +57,7 @@ def listen(source):
         return text.lower()
 
     except sr.UnknownValueError:
-        speak("Sorry, I could not understand you. Please repeat.")
+        print("Could not understand audio.")
         return ""
 
     except sr.RequestError:
@@ -61,19 +65,226 @@ def listen(source):
         return ""
 
 
+
+# -----------------------------
+# Search Web
+# -----------------------------
+
+def search_web(command):
+
+    search_words = [
+        "search",
+        "look up",
+        "lookup",
+        "find",
+        "find information about",
+        "find information on",
+        "look for",
+        "search the web for",
+        "search online for"
+    ]
+
+    search_text = command.lower()
+
+    for phrase in search_words:
+        if phrase in search_text:
+            search_text = search_text.replace(phrase, "", 1)
+            break
+
+    # Remove unnecessary words
+    unnecessary_words = [
+        "can you",
+        "could you",
+        "please",
+        "for me",
+        "the"
+    ]
+
+    for phrase in unnecessary_words:
+        search_text = search_text.replace(phrase, "")
+
+    search_text = " ".join(search_text.split())
+
+    if search_text:
+
+        speak("Searching for " + search_text)
+
+        search_url = (
+            "https://www.google.com/search?q="
+            + quote(search_text)
+        )
+
+        webbrowser.open(search_url)
+
+    else:
+
+        speak("Please tell me what you want to search for.")
+
+# -----------------------------
+# Weather Command
+# -----------------------------
+def weather_command(command, source):
+
+    weather_words = [
+        "weather in",
+        "weather at",
+        "weather for"
+    ]
+
+    city = ""
+
+    # Check if city is already in the command
+    for phrase in weather_words:
+
+        if phrase in command:
+
+            city = command.split(phrase, 1)[1].strip()
+            break
+
+    # If city was not included, ask for it
+    if not city:
+
+        speak("Which city would you like the weather for?")
+
+        city = listen(source)
+
+        if not city:
+            return
+
+    # Get weather
+    weather_result = get_weather(city)
+
+    speak(weather_result)
+
+# -----------------------------
+# Create Reminder
+# -----------------------------
+
+def create_reminder(command):
+
+    words = command.split()
+
+    seconds = 0
+
+    for i, word in enumerate(words):
+
+        if word.isdigit():
+
+            number = int(word)
+
+            if i + 1 < len(words):
+
+                unit = words[i + 1]
+
+                if "second" in unit:
+                    seconds = number
+
+                elif "minute" in unit:
+                    seconds = number * 60
+
+                elif "hour" in unit:
+                    seconds = number * 60 * 60
+
+            break
+
+    if seconds == 0:
+        speak("Please tell me the reminder time.")
+        return
+
+    if " to " in command:
+
+        message = command.split(" to ", 1)[1].strip()
+
+    else:
+
+        message = "Your reminder"
+
+    set_reminder(seconds, message)
+
+    speak("Reminder set for " + message)
+
+# -----------------------------
+# Send Email Command
+# -----------------------------
+# -----------------------------
+# Clean Email Address
+# -----------------------------
+
+def clean_email_address(email):
+
+    email = email.lower().strip()
+
+    replacements = {
+        " at gmail.com": "@gmail.com",
+        " at gmail dot com": "@gmail.com",
+        " at yahoo.com": "@yahoo.com",
+        " at yahoo dot com": "@yahoo.com",
+        " at outlook.com": "@outlook.com",
+        " at outlook dot com": "@outlook.com",
+        " at ": "@",
+        " dot com": ".com"
+    }
+
+    for spoken, actual in replacements.items():
+        email = email.replace(spoken, actual)
+
+    email = email.replace(" ", "")
+
+    return email
+def email_command(source):
+
+    speak("Who should I send the email to?")
+
+    recipient = listen(source)
+
+    if recipient:
+        recipient = clean_email_address(recipient)
+
+    if not recipient:
+        speak("I could not understand the email address.")
+        return
+
+    speak("What is the subject?")
+
+    subject = listen(source)
+
+    if not subject:
+        speak("I could not understand the subject.")
+        return
+
+    speak("What should I write in the email?")
+
+    message = listen(source)
+
+    if not message:
+        speak("I could not understand the message.")
+        return
+
+    success = send_email(
+        recipient,
+        subject,
+        message
+    )
+
+    if success:
+        speak("Email sent successfully.")
+
+    else:
+        speak("Sorry, I could not send the email.")
 # -----------------------------
 # Process Commands
 # -----------------------------
 
-def process_command(command):
+def process_command(command, source):
 
-    # Hello
-    if "hello" in command:
+    intent = predict_intent(command)
+
+    if intent == "greeting":
+
         speak("Hello! How can I help you?")
 
 
-    # Time
-    elif "time" in command:
+    elif intent == "get_time":
 
         current_time = datetime.now().strftime("%I:%M %p")
 
@@ -83,8 +294,7 @@ def process_command(command):
         )
 
 
-    # Date
-    elif "date" in command:
+    elif intent == "get_date":
 
         current_date = datetime.now().strftime("%d %B %Y")
 
@@ -94,53 +304,34 @@ def process_command(command):
         )
 
 
-    # Web Search
-    elif "search" in command:
+    elif intent == "search":
 
-        search_text = command.replace(
-            "search",
-            "",
-            1
-        ).strip()
+        search_web(command)
 
-        if search_text:
+    elif intent == "weather":
+        weather_command(command, source)
 
-            speak(
-                "Searching for "
-                + search_text
-            )
+    elif intent == "send_email":
+        email_command(source)
 
-            search_url = (
-                "https://www.google.com/search?q="
-                + quote(search_text)
-            )
+    elif intent == "reminder":
+        create_reminder(command)
 
-            webbrowser.open(search_url)
+    elif intent == "general_question":
+        answer = answer_question(command)
+        speak(answer)
+        
+    elif intent == "custom_command":
+        response = execute_custom_command(command)
+        speak(response)
 
-        else:
-
-            speak(
-                "Please tell me what you want to search for."
-            )
-
-
-    # Good bye
-    elif "good bye" in command:
-
-        speak(
-            "Thank you! I'm glad I could help."
-        )
-
-
-    # Exit
-    elif "exit" in command or "quit" in command or "goodbye" in command:
+    elif intent == "exit":
 
         speak("Goodbye!")
 
         return False
 
 
-    # Unknown command
     else:
 
         speak(
@@ -149,13 +340,6 @@ def process_command(command):
 
 
     return True
-
-
-# -----------------------------
-# Start Voice Assistant
-# -----------------------------
-
-
 
 
 # -----------------------------
@@ -168,7 +352,7 @@ with sr.Microphone(device_index=1) as source:
 
     recognizer.adjust_for_ambient_noise(
         source,
-        duration=1
+        duration=0.5
     )
 
     print("Voice assistant is ready!")
@@ -184,9 +368,7 @@ with sr.Microphone(device_index=1) as source:
 
         if command:
 
-            continue_running = process_command(
-                command
-            )
+            continue_running = process_command(command, source)
 
             if not continue_running:
                 break
