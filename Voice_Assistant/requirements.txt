@@ -1,6 +1,0 @@
-SpeechRecognition
-pyttsx3
-requests
-python-dotenv
-nltk
-PyAudio
