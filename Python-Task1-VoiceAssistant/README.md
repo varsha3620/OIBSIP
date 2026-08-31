@@ -27,11 +27,9 @@ A Python-based voice assistant developed during my Oasis Infobyte internship.
 - Google Gemini API
 - Gmail SMTP
 - python-dotenv
+- Web Browser
 
-## Project Structure
-
-```text
-Voice_Assistant/
+Python-Task1-VoiceAssistant/
 │
 ├── main.py
 ├── nlp.py
@@ -42,9 +40,13 @@ Voice_Assistant/
 ├── knowledge.py
 ├── custom_commands.py
 ├── requirements.txt
-├── .env
 ├── .gitignore
-└── README.md
+├── README.md
+│
+└── screenshots/
+    ├── image1.png
+    ├── image2.png
+    ├── image3.png
 
 ## Installation
 
@@ -150,3 +152,68 @@ Voice Assistant
 ### Technologies
 
 Python, NLTK, SpeechRecognition, pyttsx3, OpenWeather API, Gmail SMTP, Google Gemini API
+
+## System Architecture
+
+                 ┌───────────────────┐
+                 │       User        │
+                 └─────────┬─────────┘
+                           │
+                           ▼
+                 ┌───────────────────┐
+                 │    Microphone     │
+                 └─────────┬─────────┘
+                           │
+                           ▼
+                 ┌───────────────────┐
+                 │ SpeechRecognition │
+                 └─────────┬─────────┘
+                           │
+                           ▼
+                 ┌───────────────────┐
+                 │   NLP / Intent    │
+                 │    Detection      │
+                 └─────────┬─────────┘
+                           │
+             ┌─────────────┼─────────────┐
+             │             │             │
+             ▼             ▼             ▼
+        ┌─────────┐   ┌──────────┐  ┌───────────┐
+        │ Weather │   │ Reminder │  │   Email   │
+        │   API   │   │          │  │   SMTP    │
+        └─────────┘   └──────────┘  └───────────┘
+             │             │             │
+             └─────────────┼─────────────┘
+                           │
+                           ▼
+                  ┌─────────────────┐
+                  │  Gemini AI /    │
+                  │ Other Services  │
+                  └────────┬────────┘
+                           │
+                           ▼
+                  ┌─────────────────┐
+                  │ Text-to-Speech  │
+                  │    pyttsx3      │
+                  └────────┬────────┘
+                           │
+                           ▼
+                  ┌─────────────────┐
+                  │ Voice Response  │
+                  └─────────────────┘
+
+## Screenshots
+
+### Voice Assistant 
+
+![Output](screenshot/image1.png)
+
+
+![Output](screenshot/image2.png)
+
+
+![Output](screenshot/image3.png)
+
+## Conclusion
+
+The Python Voice Assistant successfully demonstrates how Python can be used to develop an interactive voice-based application. By integrating speech recognition, text-to-speech, natural language processing, APIs, Gemini AI, web search, reminders, weather services, and email functionality, the system can understand voice commands and perform a variety of useful tasks. This project provided practical experience in Python programming, API integration, automation, and developing real-world intelligent applications.

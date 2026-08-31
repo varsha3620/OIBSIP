@@ -204,9 +204,6 @@ def create_reminder(command):
     speak("Reminder set for " + message)
 
 # -----------------------------
-# Send Email Command
-# -----------------------------
-# -----------------------------
 # Clean Email Address
 # -----------------------------
 
@@ -356,11 +353,6 @@ with sr.Microphone(device_index=1) as source:
     )
 
     print("Voice assistant is ready!")
-
-
-    # -----------------------------
-    # Continuous Listening
-    # -----------------------------
 
     while True:
 

@@ -1,4 +1,7 @@
 import os
+import logging
+
+logging.disable(logging.WARNING)
 from google import genai
 from dotenv import load_dotenv
 
@@ -10,8 +13,6 @@ client = genai.Client(
     api_key=GEMINI_API_KEY,
     http_options={"timeout": 30000}
 )
-
-
 
 
 def answer_question(question):
