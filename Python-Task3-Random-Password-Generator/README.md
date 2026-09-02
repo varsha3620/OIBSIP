@@ -124,8 +124,6 @@ The application then generates a secure password, displays its strength,
 automatically copies it to the clipboard, and stores the latest five
 generated passwords for the current session.
 
-### Example
-
 ```text
 Password Length: 12
 
@@ -141,7 +139,7 @@ K7@mQ2x!Lp9Z
 Strength: Strong
 
 ✓ Password generated & copied
-
+```
 ## Screenshot
 
 ![Random Password Generator](screenshot/s1.png)
@@ -154,7 +152,7 @@ Strength: Strong
 
 # Author
 
-Varsha P
+**Varsha P**
 
 ## Conclusion
 
