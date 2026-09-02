@@ -40,10 +40,18 @@ A secure and user-friendly **Random Password Generator** built with Python and T
 
 ## Project Structure
 
-```text
-Python-Task3-Random-Password-Generator/
+OIBSIP/
+├── Python-Task1-VoiceAssistant/
 │
-├── password_generator.py
+├── Python-Task3-Random-Password-Generator/
+│   ├── password_generator.py
+│   ├── README.md
+│   └── screenshot/
+│       ├── s1.png
+│       ├── s2.png
+│       ├── s3.png
+│       └── s4.png
+│
 └── README.md
 
 ## Installation
