@@ -40,19 +40,18 @@ A secure and user-friendly **Random Password Generator** built with Python and T
 
 ## Project Structure
 
-OIBSIP/
-├── Python-Task1-VoiceAssistant/
+```text
+Python-Task3-Random-Password-Generator/
 │
-├── Python-Task3-Random-Password-Generator/
-│   ├── password_generator.py
-│   ├── README.md
-│   └── screenshot/
-│       ├── s1.png
-│       ├── s2.png
-│       ├── s3.png
-│       └── s4.png
+├── password_generator.py
+├── README.md
 │
-└── README.md
+└── screenshot/
+    ├── s1.png
+    ├── s2.png
+    ├── s3.png
+    └── s4.png
+```
 
 ## Installation
 
@@ -88,51 +87,37 @@ Varsha P
 
 # System Architecture
 
-┌──────────────────────────────────────────┐
-│              USER INTERFACE              │
-│                 Tkinter                  │
-│                                          │
-│  Password Length                         │
-│  Character Type Selection                │
-│  Exclude Ambiguous Characters            │
-│  Generate / Copy Buttons                 │
-└──────────────────┬───────────────────────┘
-                   │
-                   ▼
-┌──────────────────────────────────────────┐
-│          INPUT VALIDATION                │
-│                                          │
-│  • Check password length                 │
-│  • Check at least 2 character types      │
-└──────────────────┬───────────────────────┘
-                   │
-                   ▼
-┌──────────────────────────────────────────┐
-│       PASSWORD GENERATION ENGINE         │
-│                Python                    │
-│                                          │
-│  • Character selection                   │
-│  • Guaranteed selected character types   │
-│  • Ambiguous character filtering         │
-│  • Secure random generation              │
-│  • Password shuffling                    │
-└──────────────────┬───────────────────────┘
-                   │
-                   ▼
-┌──────────────────────────────────────────┐
-│           PASSWORD ANALYSIS              │
-│                                          │
-│       Weak / Medium / Strong             │
-└──────────────────┬───────────────────────┘
-                   │
-                   ▼
-┌──────────────────────────────────────────┐
-│             OUTPUT & STORAGE             │
-│                                          │
-│  • Display generated password            │
-│  • Copy to clipboard                     │
-│  • Last 5 passwords (session only)       │
-└──────────────────────────────────────────┘
+┌## System Architecture
+
+```text
+┌──────────────────────────────────────────────┐
+│              USER INTERFACE                  │
+│ Password Length | Character Type Selection   │
+│ Exclude Ambiguous | Generate / Copy Buttons  │
+└──────────────────────┬───────────────────────┘
+                       ▼
+┌──────────────────────────────────────────────┐
+│              INPUT VALIDATION                │
+│ Check password length and at least 2 types   │
+└──────────────────────┬───────────────────────┘
+                       ▼
+┌──────────────────────────────────────────────┐
+│         PASSWORD GENERATION ENGINE           │
+│ Character selection | Guaranteed types       │
+│ Ambiguous character filtering | Shuffling   │
+└──────────────────────┬───────────────────────┘
+                       ▼
+┌──────────────────────────────────────────────┐
+│             PASSWORD ANALYSIS                │
+│              Weak / Medium / Strong          │
+└──────────────────────┬───────────────────────┘
+                       ▼
+┌──────────────────────────────────────────────┐
+│              OUTPUT & STORAGE                │
+│ Display password | Copy to clipboard        │
+│ Last 5 passwords (session only)              │
+└──────────────────────────────────────────────┘
+```
 
 ## Example
 
