@@ -61,7 +61,7 @@ Python-Task3-Random-Password-Generator/
 git clone https://github.com/varsha3620/OIBSIP.git
 ```
 
-### 2. Navigate to the project folder
+# 2. Navigate to the project folder
 
 cd Python-Task3-Random-Password-Generator
 
@@ -86,8 +86,6 @@ Level: Advanced
 Varsha P
 
 # System Architecture
-
-┌## System Architecture
 
 ```text
 ┌──────────────────────────────────────────────┐
@@ -154,6 +152,14 @@ Strength: Strong
 
 ![Random Password Generator](screenshot/s4.png)
 
+# Author
+
+Varsha P
+
 ## Conclusion
 
-The **Random Password Generator** successfully provides a secure and user-friendly way to create strong passwords. The application uses Python's `secrets` module for secure password generation and Tkinter for the graphical user interface. Users can customize password length and character types, exclude ambiguous characters, check password strength, copy passwords to the clipboard, and view their last five generated passwords. Overall, the project demonstrates the practical use of Python programming, GUI development, security concepts, and user input validation in a real-world application.
+The Random Password Generator successfully provides a secure and user-friendly way to create strong passwords. The application uses Python's `secrets` module for secure password generation and Tkinter for the graphical user interface.
+
+Users can customize password length and character types, exclude ambiguous characters, check password strength, copy passwords to the clipboard, and view their last five generated passwords.
+
+Overall, the project demonstrates the practical use of Python programming, GUI development, security concepts, and user input validation in a real-world application.
