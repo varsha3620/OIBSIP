@@ -1,8 +1,9 @@
 import tkinter as tk
 from tkinter import messagebox
-import secrets
-import string
 import pyperclip
+
+from password_logic import generate_secure_password
+from password_strength import calculate_strength
 
 
 # =========================
@@ -70,51 +71,6 @@ def copy_password():
 
 
 # =========================
-# Password Strength
-# =========================
-
-def show_strength(password):
-
-    strength = 0
-
-    if len(password) >= 12:
-        strength += 1
-
-    if uppercase_var.get():
-        strength += 1
-
-    if lowercase_var.get():
-        strength += 1
-
-    if numbers_var.get():
-        strength += 1
-
-    if symbols_var.get():
-        strength += 1
-
-    if strength <= 2:
-
-        strength_label.config(
-            text="● Weak",
-            fg=ORANGE
-        )
-
-    elif strength <= 4:
-
-        strength_label.config(
-            text="● Medium",
-            fg="#CA8A04"
-        )
-
-    else:
-
-        strength_label.config(
-            text="● Strong",
-            fg=GREEN
-        )
-
-
-# =========================
 # Generate Password
 # =========================
 
@@ -147,94 +103,15 @@ def generate_password():
 
         return
 
-    characters = ""
-    password = ""
-
-    ambiguous_characters = "0O1lI"
-
-
-    # Uppercase
-    if uppercase_var.get():
-
-        uppercase_characters = string.ascii_uppercase
-
-        if exclude_ambiguous_var.get():
-
-            uppercase_characters = "".join(
-                c for c in uppercase_characters
-                if c not in ambiguous_characters
-            )
-
-        characters += uppercase_characters
-
-        password += secrets.choice(
-            uppercase_characters
-        )
-
-
-    # Lowercase
-    if lowercase_var.get():
-
-        lowercase_characters = string.ascii_lowercase
-
-        if exclude_ambiguous_var.get():
-
-            lowercase_characters = "".join(
-                c for c in lowercase_characters
-                if c not in ambiguous_characters
-            )
-
-        characters += lowercase_characters
-
-        password += secrets.choice(
-            lowercase_characters
-        )
-
-
-    # Numbers
-    if numbers_var.get():
-
-        number_characters = string.digits
-
-        if exclude_ambiguous_var.get():
-
-            number_characters = "".join(
-                c for c in number_characters
-                if c not in ambiguous_characters
-            )
-
-        characters += number_characters
-
-        password += secrets.choice(
-            number_characters
-        )
-
-
-    # Symbols
-    if symbols_var.get():
-
-        characters += string.punctuation
-
-        password += secrets.choice(
-            string.punctuation
-        )
-
-
-    # Fill remaining characters
-    remaining_length = length - len(password)
-
-    for i in range(remaining_length):
-
-        password += secrets.choice(characters)
-
-
-    # Shuffle
-    password = list(password)
-
-    secrets.SystemRandom().shuffle(password)
-
-    password = "".join(password)
-
+    # Generate secure password
+    password = generate_secure_password(
+        length,
+        uppercase_var.get(),
+        lowercase_var.get(),
+        numbers_var.get(),
+        symbols_var.get(),
+        exclude_ambiguous_var.get()
+    )
 
     # Display password
     password_display.delete(
@@ -247,15 +124,13 @@ def generate_password():
         password
     )
 
-
     # Automatic copy
     pyperclip.copy(password)
 
     status_label.config(
-        text="✓ Password generated ",
+        text="✓ Password generated",
         fg=GREEN
     )
-
 
     # Add to history
     password_history.insert(
@@ -265,7 +140,6 @@ def generate_password():
 
     if len(password_history) > 5:
         password_history.pop()
-
 
     # Update history
     history_listbox.delete(
@@ -280,9 +154,32 @@ def generate_password():
             old_password
         )
 
+    # Calculate password strength
+    strength = calculate_strength(
+        password,
+        selected_types
+    )
 
-    # Strength
-    show_strength(password)
+    if strength == "Weak":
+
+        strength_label.config(
+            text="● Weak",
+            fg=ORANGE
+        )
+
+    elif strength == "Medium":
+
+        strength_label.config(
+            text="● Medium",
+            fg="#CA8A04"
+        )
+
+    else:
+
+        strength_label.config(
+            text="● Strong",
+            fg=GREEN
+        )
 
 
 # =========================

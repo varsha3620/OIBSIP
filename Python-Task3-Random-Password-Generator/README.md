@@ -44,6 +44,8 @@ A secure and user-friendly **Random Password Generator** built with Python and T
 Python-Task3-Random-Password-Generator/
 │
 ├── password_generator.py
+├── password_logic.py
+├── password_strength.py
 ├── README.md
 │
 └── screenshot/

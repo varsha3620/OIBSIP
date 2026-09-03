@@ -62,6 +62,8 @@ OIBSIP/
 │
 ├── Python-Task3-Random-Password-Generator/
 │   ├── password_generator.py
+|   ├── password_logic.py
+|   ├── password_strength.py
 │   ├── README.md
 │   └── screenshot/
 │
